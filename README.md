@@ -7,45 +7,21 @@ The following data is extracted in the following comma delimited format with quo
 "Filename","File Hash","Filepath","Schedule Title","Column Headers","Parameter Name","Is Shared","Shared Parameter GUID","Field Type","Column Values"
 ~~~~
 
-1. **Filename**: Filename. If anonymization is desired, recommendation is to use a sequential number.
-1. **File Hash ID**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
+1. **Filename**: Filename. 
+1. **FileHashID**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
 1. **Filepath**: Filename with path
-1. **Schedule Title**: Title of drawing schedule
-1. **Column Headers**: Drawing schedule column headers. Headers with groupings are formatted with a "|" delimiter like: "Group|Header". Column headers and groupings are what are displayed graphically and are not required to match the parameter name containing the data.
-1. **Parameter Name**:
-1. **Is Shared**:
-1. **Shared Parameter GUID**:
-1. **Field Type**:
-1. **Column Values**:
+1. **ScheduleTitle**: Title of drawing schedule if displayed graphically on the sheet. This can be different than the name of the schedule used in the GUI.
+1. **IsOnSheet**: `TRUE` if the drawing schedule appears on a sheet, otherwise `FALSE`. 
+1. **ColumnHeaders**: Drawing schedule column headers. Headers with groupings are formatted with a "|" delimiter like: "Group Text|Column Header Text". Column headers and groupings are what are displayed graphically, and are not required to match the `ParameterName` containing the data.
+1. **ParameterName**: Name of the parameter that stores the data. The parameter name can be different than what `ColumnHeaders` displays on the sheet. 
+1. **IsShared**: `TRUE` if the `Parameter Name` is stored with a parameter with a GUID (in Revit, a "Shared Parameter"), and `FALSE` if not. 
+1. **SharedParameterGUID**: GUID of the parameter (in Revit, the `Shared Parameter` GUID)
+1. **ColumnValues**: All values in the column separated by the delimiter "|". Empty values result in a consecutive delimiter "||".
 
+## Example
+[FINISH DOOR SCHEDULE EXAMPLE]
 
-
-~~~~c
-private static void InitializeCsv()
-		{
-			using (FileStream stream = new FileStream(DestinationFilepath, FileMode.Append, FileAccess.Write))
-			using (StreamWriter writer = new StreamWriter(stream))
-			{
-				writer.WriteLine(@"""Filename"",""Schedule Title"",""Column Headers"",""Parameter Name"",""Is Shared"",""Shared Parameter Guid"",""Field Type"",""File Hash"",""Filepath"",""Column Values""");
-			}
-		}
-		
-		private static void WriteCsv(List<ScheduleLine> lines)
-		{
-			using (FileStream stream = new FileStream(DestinationFilepath, FileMode.Append, FileAccess.Write))
-			using (StreamWriter writer = new StreamWriter(stream))
-			{
-				foreach (ScheduleLine line in lines)
-				{
-					object[] args = new object[] { line.Filename.Escape(), line.ScheduleTitle.Escape(), line.DelimitedColumnHeaders.Escape(), line.ParameterName.Escape(), line.IsShared.ToString().Escape(), line.SharedParameterGuid.Escape(), line.FieldType.ToString(), line.Hash.Escape(), line.Filepath.Escape(), line.ColumnValues.Escape() };
-					writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"", args);
-				}
-			}
-		}
-~~~~
-
-
-## To Extract Revit Schedule Data
+## Instructions To Extract Revit Schedule Data
 1. [finish]
 1. [finish]
 1. [finish]
@@ -57,6 +33,3 @@ private static void InitializeCsv()
 
 ## License
 [finish]
-
-## Disclaimer (MOVE TO PROFILE)
-All views are my own and are not of my employers. Links do not imply endorsement of any kind.
