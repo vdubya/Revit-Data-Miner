@@ -2,15 +2,26 @@
 The Revit Schedule CSV Parser is a Revit utility that performs a batch extraction to CSV of all Revit schedules from all Revit files in a folder and subfolders. It was developed by Donovan Justice and Randall Stevens of [AVAIL](https://www.getavail.com/About) as part of the Building Content Summit presentation "Identifying Data Patterns from Professional Practice" by Van Woods. With the permissive MIT open source license from AVAIL, derivatives, enhancments, fixes, documentation, and participation in the submission of crowd sourced data for industry-wide analysis is encouraged.
 
 ## Data Extracted
-The following data points are extracted:
-(code flag)[OnSheet], [File GUID], [Column Headers], [Column Values],  
-1. [finish]
-1. [finish]
-1. [finish]
-1. [finish]
-1. [finish]
+The following data is extracted in the following comma delimited format with quote wrapped strings: 
+~~~~csharp
+"Filename","File Hash","Filepath","Schedule Title","Column Headers","Parameter Name","Is Shared","Shared Parameter GUID","Field Type","Column Values"
+~~~~
 
-~~~~private static void InitializeCsv()
+1. **Filename**: Filename. If anonymization is desired, recommendation is to use a sequential number.
+1. **File Hash ID**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
+1. **Filepath**: Filename with path
+1. **Schedule Title**: Title of drawing schedule
+1. **Column Headers**: Drawing schedule column headers. Headers with groupings are formatted with a "|" delimiter like: "Group|Header". Column headers and groupings are what are displayed graphically and are not required to match the parameter name containing the data.
+1. **Parameter Name**:
+1. **Is Shared**:
+1. **Shared Parameter GUID**:
+1. **Field Type**:
+1. **Column Values**:
+
+
+
+~~~~c
+private static void InitializeCsv()
 		{
 			using (FileStream stream = new FileStream(DestinationFilepath, FileMode.Append, FileAccess.Write))
 			using (StreamWriter writer = new StreamWriter(stream))
