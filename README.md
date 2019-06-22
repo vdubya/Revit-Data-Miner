@@ -4,7 +4,7 @@ The Revit Schedule CSV Parser is a Revit utility that performs a batch extractio
 ## Data Extracted
 The following data is extracted in the following comma delimited format with quote wrapped strings: 
 ~~~~csharp
-"Filename","File Hash","Filepath","Schedule Title","Column Headers","Parameter Name","Is Shared","Shared Parameter GUID","Field Type","Column Values"
+"Filename","FileHashID","Filepath","ScheduleTitle","InOnSheet","ColumnHeaders","ParameterName","IsShared","SharedParameterGUID","Column Values"
 ~~~~
 
 1. **Filename**: Filename. 
