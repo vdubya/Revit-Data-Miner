@@ -404,7 +404,7 @@ namespace Utilities
 			using (FileStream stream = new FileStream(DestinationFilepath, FileMode.Append, FileAccess.Write))
 			using (StreamWriter writer = new StreamWriter(stream))
 			{
-				writer.WriteLine(@"""Filename"",""Schedule Title"",""Column Headers"",""Parameter Name"",""Is Shared"",""Shared Parameter Guid"",""Field Type"",""File Hash"",""Filepath"",""Column Values""");
+				writer.WriteLine(@"""Filename"",""File Hash ID"",""Filepath"",""Schedule Title"",""Column Headers"",""Parameter Name"",""Is Shared"",""Shared Parameter GUID"",""Field Type"",""Column Values""");
 			}
 		}
 		
@@ -415,7 +415,7 @@ namespace Utilities
 			{
 				foreach (ScheduleLine line in lines)
 				{
-					object[] args = new object[] { line.Filename.Escape(), line.ScheduleTitle.Escape(), line.DelimitedColumnHeaders.Escape(), line.ParameterName.Escape(), line.IsShared.ToString().Escape(), line.SharedParameterGuid.Escape(), line.FieldType.ToString(), line.Hash.Escape(), line.Filepath.Escape(), line.ColumnValues.Escape() };
+					object[] args = new object[] { line.Filename.Escape(), line.Hash.Escape(), line.Filepath.Escape(), line.ScheduleTitle.Escape(), line.DelimitedColumnHeaders.Escape(), line.ParameterName.Escape(), line.IsShared.ToString().Escape(), line.SharedParameterGuid.Escape(), line.FieldType.ToString(), line.ColumnValues.Escape() };
 					writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"", args);
 				}
 			}
