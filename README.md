@@ -22,8 +22,8 @@ The following data is extracted in the following comma delimited format with quo
 1. **IsShared**: `TRUE` if the `Parameter Name` is stored with a parameter with a GUID (in Revit, a "Shared Parameter"), and `FALSE` if not. 
 1. **SharedParameterGUID**: GUID of the parameter (in Revit, the `Shared Parameter` GUID)
 1. **ColumnValues**: All values in the column separated by the delimiter "|". Empty values result in a consecutive delimiter "||".
-1. **Filename**: Filename. 
 1. **FileHashID**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
+1. **Filename**: Filename. 
 1. **Filepath**: Filename with path
 
 ## Example
