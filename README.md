@@ -1,3 +1,8 @@
+## Quick Start
+* Download and run [ScheduleCSVParser.rvt](https://github.com/vdubya/Revit-Schedule-CSV-Parser/blob/master/ScheduleCSVParser.rvt)
+* Select source folder with RVT files to scan (includes all subfolders) and destination folder for CSV export.
+* Submit CSV as Github pull request to contribute to crowdsourced data analysis.
+
 ## About
 * The Revit Schedule CSV Parser is a Revit utility that performs a batch extraction to CSV of all Revit schedules from all Revit files in a folder and subfolders. 
 * Originally developed by Donovan Justice and Randall Stevens of [AVAIL](https://www.getavail.com/About) as part of the Building Content Summit presentation "Identifying Data Patterns from Professional Practice" by Van Woods. 
@@ -23,8 +28,8 @@ The following data is extracted in the following comma delimited format with quo
 1. **SharedParameterGUID**: GUID of the parameter (in Revit, the `Shared Parameter` GUID)
 1. **ColumnValues**: All values in the column separated by the delimiter "|". Empty values result in a consecutive delimiter "||".
 1. **FileHashID**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
-1. **Filename**: Filename. 
-1. **Filepath**: Filename with path
+1. **Filename**: File name with file extension
+1. **Filepath**: File name with path
 
 ## Example
 [FINISH DOOR SCHEDULE EXAMPLE]
@@ -41,4 +46,3 @@ The following data is extracted in the following comma delimited format with quo
 
 ## License
 [finish]
-
