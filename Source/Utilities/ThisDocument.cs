@@ -1,7 +1,7 @@
 /*
  * User: Donovan Justice
- * Date: 6/1/2018
- * Time: 5:51 PM
+ * Date: 6/1/2019
+ * Time: 4:08 PM
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
@@ -47,6 +47,8 @@ namespace Utilities
 		}
 		
 		public static string DestinationFilepath { get; set; }
+		
+		private static List<ScheduleSheetInstance> ScheduleInstances { get; set; }
 		
 		public void ScheduleCSVParser()
 		{
@@ -134,19 +136,20 @@ namespace Utilities
                 string fileName = Path.GetFileName(filePath);
                 string fileHash = "UNKNOWN";
 
-                var openDocument = OpenDocument(filePath);
+                var openDocument = FindOpenDocument(filePath);
 
                 if (openDocument != null)
                 {
                     document = openDocument;
                     canOpenDocument = true;
+                    fileHash = "OPENDOCUMENT";
                 }
                 else
                 {
                     try
                     {
+                    	fileHash = ComputeHash(filePath);
                         document = this.Application.Application.OpenDocumentFile(filePath);
-                        fileHash = filePath.ComputeHash();
                         canOpenDocument = true;
                     }
                     catch (Exception ex)
@@ -157,11 +160,8 @@ namespace Utilities
 
                 if (canOpenDocument)
                 {
-                    var schedules = new FilteredElementCollector(document)
-                        .OfClass(typeof(ViewSchedule)).OfType<ViewSchedule>()
-                        .Where(x => !x.IsTitleblockRevisionSchedule && !x.IsTemplate && x.Definition.ShowHeaders)
-                        .OrderBy(x => x.Name)
-                        .ToList();
+                    var schedules = GetSchedules(document);                    
+                    var scheduleInstances = GetSheetScheduleSheetInstances(document);
 
                     ProgressBarHandler.Instance.ProgressMainProcess(schedules.Count, string.Format("{0} Schedules from {1}", schedules.Count, fileName));
 
@@ -172,7 +172,8 @@ namespace Utilities
 
                         try
                         {
-                            ParseSchedule(schedule, filePath, fileHash);
+                        	bool isOnSheet = scheduleInstances.FirstOrDefault(x => x.ScheduleId == schedule.Id) != null;
+                            ParseSchedule(schedule, filePath, fileHash, isOnSheet);
                             ProgressBarHandler.Instance.ProgressSubProcess(string.Format("Processing: {0}", schedule.Name));
                         }
                         catch (Exception exception)
@@ -191,7 +192,7 @@ namespace Utilities
             ProgressBarHandler.Instance.IsComplete = true;
 		}
 			
-		public void ParseSchedule(ViewSchedule schedule, string filePath, string fileHash)
+		public void ParseSchedule(ViewSchedule schedule, string filePath, string fileHash, bool isOnSheet)
 		{
 			if (!schedule.IsTitleblockRevisionSchedule && !schedule.IsTemplate && schedule.Definition.ShowHeaders)
 			{
@@ -227,6 +228,7 @@ namespace Utilities
 						Filename = Path.GetFileName(filePath),
 						Hash = fileHash,
 						ScheduleTitle = schedule.Name,
+						IsOnSheet = isOnSheet,
 						OriginalColumnHeader = scheduleField.ColumnHeading.Trim(),
 						ParameterName = scheduleField.GetName().Trim(),
 						SharedParameterGuid = idString,
@@ -240,12 +242,18 @@ namespace Utilities
 				}
 				
 				var sectionData = schedule.GetTableData().GetSectionData(SectionType.Body);
+									
+				List<int> mergedRowIndicesAcrossColumns = new List<int>();
+				
+				bool hasGrandTotal = schedule.Definition.ShowGrandTotal;
+				if (hasGrandTotal)
+					mergedRowIndicesAcrossColumns.Add(sectionData.LastRowNumber);
 					
 				for (int col = sectionData.FirstColumnNumber; col <= sectionData.LastColumnNumber; col++)
 				{
 					var columnHeaders = string.Empty;
 					var columnValues = string.Empty;
-					
+
 					var matchingLine = lines.FirstOrDefault(x => x.ColumnIndex == col);
 
 					if (matchingLine != null)
@@ -259,19 +267,33 @@ namespace Utilities
 						//Read each cell of the column in reverse order to build up values and headers
 						for (int row = sectionData.LastRowNumber; row >= sectionData.FirstRowNumber; row--)
 						{
+							var cellText = schedule.GetCellText(SectionType.Body, row, col);
 							var mergedData = sectionData.GetMergedCell(row, col);
 							
 							var mergedTopLeftCellText = sectionData.GetCellText(mergedData.Top, mergedData.Left).Trim();
 							var mergedBottomLeftCellText = sectionData.GetCellText(mergedData.Bottom, mergedData.Left).Trim();
 
 							bool isMergedAcrossRowsInColumn = false;
+							bool isRowMergedAcrossAllColumns = false;
 							
 							if (row != sectionData.LastRowNumber)
+							{
 								isMergedAcrossRowsInColumn = IsMergedInColumnOnly(mergedData, previousMergedData);
+							}
+							
+							if (mergedData.Top == mergedData.Bottom && 
+							    mergedData.Left == sectionData.FirstColumnNumber && 
+							    mergedData.Right == sectionData.LastColumnNumber)
+							{
+								isRowMergedAcrossAllColumns = true;
+								mergedRowIndicesAcrossColumns.Add(row);
+							}
 							
 							if (!isMatchingOriginalText)
+							{
 								isMatchingOriginalText = (matchingLine.OriginalColumnHeader == mergedTopLeftCellText);
-
+							}
+							
 							if (isMatchingOriginalText)
 							{
 								if (isMergedAcrossRowsInColumn)
@@ -282,15 +304,22 @@ namespace Utilities
 								else
 								{
 									columnHeaders = (!string.IsNullOrEmpty(columnHeaders)) 
-										? string.Format("{0}|{1}", mergedTopLeftCellText.Escape(), columnHeaders) 
-										: mergedTopLeftCellText.Escape();
+										? string.Format("{0}|{1}", mergedTopLeftCellText, columnHeaders) 
+										: mergedTopLeftCellText;
 								}
 							}
 							else
 							{
-								columnValues = (!string.IsNullOrEmpty(columnValues)) 
-									? string.Format("{0}|{1}", mergedTopLeftCellText.Escape(), columnValues) 
-									: mergedTopLeftCellText.Escape();
+								if (row == sectionData.FirstRowNumber && string.IsNullOrEmpty(cellText))
+								{
+									continue;
+								}
+								else if (!isRowMergedAcrossAllColumns && !mergedRowIndicesAcrossColumns.Contains(row))
+								{
+									columnValues = (!string.IsNullOrEmpty(columnValues))
+										? string.Format("{0}|{1}", cellText, columnValues) 
+										: cellText;
+								}
 							}
 							
 							previousMergedCellTopRowNumber = mergedData.Top;
@@ -300,7 +329,7 @@ namespace Utilities
 						}
 						
 						matchingLine.DelimitedColumnHeaders = columnHeaders;
-						matchingLine.ColumnValues = columnValues;
+						matchingLine.ColumnValues = columnValues.TrimStart('|');
 					}
 				}
 
@@ -335,7 +364,7 @@ namespace Utilities
                 OpenLocation(DestinationFilepath);
 		}
 		
-		private Document OpenDocument(string pathName)
+		private Document FindOpenDocument(string pathName)
         {
             Document matchedDocument = null;
             Document possibleMatchedDocument = null;
@@ -354,6 +383,23 @@ namespace Utilities
 
             return (matchedDocument != null) ? matchedDocument : possibleMatchedDocument;
         }	
+		
+		private List<ViewSchedule> GetSchedules(Document document)
+		{
+			return new FilteredElementCollector(document)
+				.OfClass(typeof(ViewSchedule)).OfType<ViewSchedule>()
+				.Where(x => !x.IsTitleblockRevisionSchedule && !x.IsTemplate && x.Definition.ShowHeaders)
+				.OrderBy(x => x.Name)
+				.ToList();
+		}
+		
+		private List<ScheduleSheetInstance> GetSheetScheduleSheetInstances(Document document)
+        {
+            return new FilteredElementCollector(document)
+            	.OfClass(typeof(ScheduleSheetInstance))
+            	.Cast<ScheduleSheetInstance>()
+            	.ToList();
+        }
 		
 		private static bool IsMergedInColumnOnly(TableMergedCell mergedData, TableMergedCell previousMergedData)
 		{
@@ -404,7 +450,7 @@ namespace Utilities
 			using (FileStream stream = new FileStream(DestinationFilepath, FileMode.Append, FileAccess.Write))
 			using (StreamWriter writer = new StreamWriter(stream))
 			{
-				writer.WriteLine(@"""Filename"",""File Hash ID"",""Filepath"",""Schedule Title"",""Column Headers"",""Parameter Name"",""Is Shared"",""Shared Parameter GUID"",""Field Type"",""Column Values""");
+				writer.WriteLine(@"""Filename"",""Schedule Title"",""IsOnSheet"",""Column Headers"",""Parameter Name"",""Is Shared"",""Shared Parameter Guid"",""File Hash"",""Filepath"",""Column Values""");
 			}
 		}
 		
@@ -415,7 +461,7 @@ namespace Utilities
 			{
 				foreach (ScheduleLine line in lines)
 				{
-					object[] args = new object[] { line.Filename.Escape(), line.Hash.Escape(), line.Filepath.Escape(), line.ScheduleTitle.Escape(), line.DelimitedColumnHeaders.Escape(), line.ParameterName.Escape(), line.IsShared.ToString().Escape(), line.SharedParameterGuid.Escape(), line.FieldType.ToString(), line.ColumnValues.Escape() };
+					object[] args = new object[] { line.Filename.Escape(), line.ScheduleTitle.Escape(), line.IsOnSheet.ToString().Escape(), line.DelimitedColumnHeaders.Escape(), line.ParameterName.Escape(), line.IsShared.ToString().Escape(), line.SharedParameterGuid.Escape(), line.Hash.Escape(), line.Filepath.Escape(), line.ColumnValues.Escape() };
 					writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"", args);
 				}
 			}
@@ -467,6 +513,25 @@ namespace Utilities
             System.Diagnostics.Process.Start("explorer.exe", args);
         }
 		
+		public string ComputeHash(string filepath)
+		{
+			string str = string.Empty;
+
+			try
+			{
+				FileInfo info = new FileInfo(filepath);
+				SHA256 sha256 = SHA256.Create();
+				byte[] shaValue = sha256.ComputeHash(info.OpenRead());
+				str = Convert.ToBase64String(shaValue);
+			}
+			catch (Exception ex)
+			{ 
+				str = string.Format("ERROR|{0}", ex.Message);
+			}
+			
+			return str;
+		}
+		
 		private void Application_FailuresProcessing(object sender, FailuresProcessingEventArgs e)
         {
             FailuresAccessor failuresAccessor = e.GetFailuresAccessor();
@@ -493,23 +558,6 @@ namespace Utilities
 				? string.Empty 
 				: value.Replace("\"", "\"\"");
 		}
-		
-		public static string ComputeHash(this string filepath)
-		{
-			string str = string.Empty;
-			FileInfo info = new FileInfo(filepath);
-			
-			try
-			{
-				str = Convert.ToBase64String(SHA256.Create().ComputeHash(info.OpenRead()));
-			}
-			catch (Exception)
-			{ 
-				str = "Unknown";
-			}
-			
-			return str;
-		}
 	}	
 		
 	public class ScheduleLine
@@ -518,6 +566,7 @@ namespace Utilities
 		public string Filepath { get; set; }
 		public string Filename { get; set; }
 		public string ScheduleTitle { get; set; }
+		public bool IsOnSheet { get; set; }
 		public string OriginalColumnHeader { get; set; }
 		public string DelimitedColumnHeaders { get; set; }
 		public string ParameterName { get; set; }
