@@ -1,5 +1,5 @@
 ## Quick Start
-* Download and run [ScheduleCSVParser.rvt](https://github.com/vdubya/Revit-Schedule-CSV-Parser/blob/master/ScheduleCSVParser.rvt)
+* Download and run [ScheduleCSVParser.rvt](https://github.com/vdubya/Revit-Schedule-CSV-Parser/releases/download/v0.1/ScheduleCSVParser-v0.1.rvt)
 * Select source folder with RVT files to scan (includes all subfolders) and destination folder for CSV export.
 * Create a new Github Issue and attach the exported CSV to contribute to crowdsourced data analysis.
 
