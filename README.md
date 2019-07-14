@@ -1,7 +1,7 @@
 ## Quick Start
-* Download and run [ScheduleCSVParser-v0.1.rvt](https://github.com/vdubya/Revit-Schedule-CSV-Parser/releases/download/v0.1/ScheduleCSVParser-v0.1.rvt)
-* Select source folder with RVT files to scan (includes all subfolders) and destination folder for CSV export.
-* Create a new Github Issue and attach the exported CSV to contribute to crowdsourced data analysis.
+1. Download and run [ScheduleCSVParser-v0.1.rvt](https://github.com/vdubya/Revit-Schedule-CSV-Parser/releases/download/v0.1/ScheduleCSVParser-v0.1.rvt)
+1. Select source folder with RVT files to scan (includes all subfolders) and destination folder for CSV export.
+1. Create a new Github Issue and attach the exported CSV to contribute to crowdsourced data analysis.
 
 ## About
 * The Revit Schedule CSV Parser is a Revit utility that performs a batch extraction to CSV of all Revit schedules from all Revit files in a folder and subfolders. 
