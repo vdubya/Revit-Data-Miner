@@ -26,4 +26,4 @@ The following data is extracted in the following comma delimited format with quo
 1. **Shared Parameter Guid**: GUID of the parameter (in Revit, the `Shared Parameter` GUID)
 1. **File Hash**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
 1. **Filepath**: File name with path
-1. **Column Values**: All values in the column separated by the delimiter "|". Empty values result in a consecutive delimiter "||".
+1. **Column Values**: All values in the column separated by the delimiter "|". Delimiter only between values, not at beginning and end. An empty column results in "" not "||".
