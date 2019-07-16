@@ -12,7 +12,7 @@
 * CSV was chosen as a universally accessible format, and commonly used in many open source data science and machine learning tools. 
 * A web accessible database is under consideration for collecting a curated set of bulk schedule extraction contributions for statistical analyses. Please contact Van Woods if you are interested in participating. See Contribution Guidelines [FINISH]. 
 
-## Data Extraction Schema
+## Drawing Schedule Data Extraction Schema
 The following data is extracted in the following comma delimited format with quote wrapped strings, with one CSV row for each drawing schedule column: 
 ~~~~
 "Filename","Schedule Title","IsOnSheet","Column Headers","Parameter Name","Is Shared","Shared Parameter Guid","File Hash","Filepath","Column Values"
