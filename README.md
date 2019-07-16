@@ -5,7 +5,7 @@
 
 ## About
 * The Revit Schedule CSV Parser is a Revit utility that performs a batch extraction to CSV of all Revit schedules from all Revit files in a folder and subfolders. 
-* Originally developed by Donovan Justice and Randall Stevens of [AVAIL](https://www.getavail.com/About) as part of the Building Content Summit presentation "Identifying Data Patterns from Professional Practice" by Van Woods. 
+* Originally developed by Donovan Justice and Randall Stevens of [AVAIL](https://www.getavail.com/About) in collaboration with Van Woods as part of the Building Content Summit presentation "Identifying Data Patterns from Professional Practice." 
 * Licensed with a permissive MIT open source license from AVAIL.
 * Users are encouraged to develop derivatives, enhancements, fixes, documentation, and participate in the submission of crowdsourced data for industry-wide analysis. 
 * Please submit improvements. To encourage maximum participation, growth, and innovation, users are requested (but not required) to submit Pull Requests to incorporate improvements to the source. 
@@ -13,7 +13,6 @@
 * A web accessible database is under consideration for collecting a curated set of bulk schedule extraction contributions for statistical analyses. Please contact Van Woods if you are interested in participating. See Contribution Guidelines [FINISH]. 
 
 ## Data Extracted
-CSV with quote wrapped strings require the least amount of steps for opening in Excel. 
 The following data is extracted in the following comma delimited format with quote wrapped strings: 
 ~~~~csharp
 "ID","ScheduleTitle","InOnSheet","ColumnHeaders","ParameterName","IsShared","SharedParameterGUID","Column Values","FileHashID","Filename","Filepath"
@@ -30,19 +29,3 @@ The following data is extracted in the following comma delimited format with quo
 1. **FileHashID**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
 1. **Filename**: File name with file extension
 1. **Filepath**: File name with path
-
-## Example
-[FINISH DOOR SCHEDULE EXAMPLE]
-
-## Instructions To Extract Revit Schedule Data
-1. [finish]
-1. [finish]
-1. [finish]
-
-## To Contribute Code
-1. [finish]
-1. [finish]
-1. [finish]
-
-## License
-[finish]
