@@ -17,13 +17,13 @@ The following data is extracted in the following comma delimited format with quo
 ~~~~
 "Filename","Schedule Title","IsOnSheet","Column Headers","Parameter Name","Is Shared","Shared Parameter Guid","File Hash","Filepath","Column Values"
 ~~~~
-1. **Filename**: File name with file extension
+1. **Filename**: File name with file extension.
 1. **Schedule Title**: Title of drawing schedule if displayed graphically on the sheet. This can be different than the name of the 
-1. **IsOnSheet**: `TRUE` if the drawing schedule appears on a sheet, otherwise `FALSE`. 
+1. **IsOnSheet**: `True` if the drawing schedule appears on a sheet, otherwise `False`. 
 1. **Column Headers**: Drawing schedule column headers. Headers with groupings are formatted with a "|" delimiter like: "Group Text|Column Header Text". Column headers and groupings are what are displayed graphically, and are not required to match the `ParameterName` containing the data.
 1. **Parameter Name**: Name of the parameter that stores the data. The parameter name can be different than what `ColumnHeaders` displays on the sheet. 
-1. **Is Shared**: `TRUE` if the `Parameter Name` is stored with a parameter with a GUID (in Revit, a "Shared Parameter"), and `FALSE` if not. 
-1. **Shared Parameter Guid**: GUID of the parameter (in Revit, the `Shared Parameter` GUID)
+1. **Is Shared**: `True` if the `Parameter Name` is stored with a parameter with a GUID (in Revit, a "Shared Parameter"), and `False` if not. 
+1. **Shared Parameter Guid**: GUID of the parameter (in Revit, the `Shared Parameter` GUID).
 1. **File Hash**: SHA256 hash of file, used to uniquely ID each file independent of filename, timestamp, and path. 
-1. **Filepath**: File name with path
+1. **Filepath**: File name with path.
 1. **Column Values**: All values in the column separated by the delimiter "|". Delimiter only between values, not at beginning and end. An empty column results in "" not "||".
