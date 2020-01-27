@@ -5,7 +5,6 @@
 
 ## About
 * The Revit Schedule CSV Parser is a Revit utility that performs a batch extraction to CSV of all drawing schedules from all Revit files in a folder and subfolders. 
-FINISH
 * A key aspect of this approach is to rely on drawing schedules as a source of data that a)is legally exisitng quality controlled data that  
 an existing bulk extration of quality controlled data without having to 
 * Originally developed by Donovan Justice and Randall Stevens of [AVAIL](https://www.getavail.com/About) in collaboration with Van Woods as part of the Building Content Summit presentation "[Identifying Data Patterns from Professional Practice](https://github.com/vdubya/Revit-Schedule-Miner/raw/master/BiLT_2019-Data_Patterns_From_Professional_Practice.pdf)." 
